@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import url from "../utils/api";
 import Cards from "../components/Cards";
+import Loader from "../components/Loader";
 
 const Home = () => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [changePageLoader, setChangePageLoader] = useState();
+  const [changePageLoader, setChangePageLoader] = useState("");
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   useEffect(() => {
@@ -14,7 +16,6 @@ const Home = () => {
       try {
         const response = await axios.get(`${url}/cards?page=${page}`);
         console.log(page);
-        console.log(changePageLoader);
         if (response.status === 200) {
           setCards(response.data.cards);
         } else {
@@ -32,7 +33,6 @@ const Home = () => {
 
   const nextPage = () => {
     setChangePageLoader(true);
-
     setPage(page + 1);
   };
   const prevPage = () => {
@@ -47,25 +47,9 @@ const Home = () => {
   }
 
   if (loading) {
-    return (
-      <div className="loader-div">
-        <div className="lds-default">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-      </div>
-    );
+    return <Loader />;
   }
+
   return (
     <>
       <div className="pagination">
@@ -78,35 +62,21 @@ const Home = () => {
         </button>
       </div>
       {changePageLoader ? (
-        <div className="loader-div">
-          <div className="lds-default">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-        </div>
+        <Loader />
       ) : (
         <div className="main">
           {cards.map((card) => {
             if (card.imageUrl !== undefined) {
               return (
-                <Cards
-                  key={card.id}
-                  rarity={card.rarity}
-                  type={card.type}
-                  name={card.name}
-                  id={card.id}
-                  imgUrl={card.imageUrl}
-                />
+                <Link to={`/details/${card.id}`} key={card.id}>
+                  <Cards
+                    rarity={card.rarity}
+                    type={card.type}
+                    name={card.name}
+                    id={card.id}
+                    imgUrl={card.imageUrl}
+                  />
+                </Link>
               );
             }
           })}

@@ -1,5 +1,3 @@
-// import { useEffect, useState } from "react";
-
 const Cards = (props) => {
   const { type, name, imgUrl, rarity } = props;
   return (
